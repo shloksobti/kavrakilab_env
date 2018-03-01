@@ -1,0 +1,628 @@
+#!/bin/bash
+#_kavrakilab-check-env-vars || exit 1
+
+KAVRAKILAB_INSTALL_DEPENDENCIES_DIR=$KAVRAKILAB_ENV_DIR/.env/dependencies
+KAVRAKILAB_INSTALL_DEPENDENCIES_ON_DIR=$KAVRAKILAB_ENV_DIR/.env/dependencies-on
+KAVRAKILAB_INSTALL_INSTALLED_DIR=$KAVRAKILAB_ENV_DIR/.env/installed
+
+mkdir -p $KAVRAKILAB_INSTALL_DEPENDENCIES_DIR
+mkdir -p $KAVRAKILAB_INSTALL_DEPENDENCIES_ON_DIR
+mkdir -p $KAVRAKILAB_INSTALL_INSTALLED_DIR
+
+KAVRAKILAB_INSTALL_TARGETS_DIR=$KAVRAKILAB_DIR/installer/targets
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function _make_sure_installed
+{
+    local pkgs_to_install=
+    for pkg in $@
+    do
+        if ! dpkg -s $pkg &> /dev/null
+        then
+            pkgs_to_install="$pkgs_to_install $pkg"
+        fi
+    done
+
+    if [ -n "$pkgs_to_install" ]
+    then
+        echo "Going to install: $pkgs_to_install"
+        sudo apt-get install -y $pkgs_to_install
+    fi
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+_make_sure_installed python-yaml git subversion
+
+KAVRAKILAB_SYSTEM_DIR=$KAVRAKILAB_ENV_DIR/system
+KAVRAKILAB_REPOS_DIR=$KAVRAKILAB_ENV_DIR/repos
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function randid {
+    </dev/urandom tr -dc '0123456789abcdef' | head -c16; echo ""
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function kavrakilab-install-error {
+    echo -e "\033[38;5;1m
+Error while installing target '$KAVRAKILAB_INSTALL_CURRENT_TARGET':
+
+    $1
+\033[0m"
+    exit 1
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function kavrakilab-install-warning {
+    echo -e "\033[33;5;1m[$KAVRAKILAB_INSTALL_CURRENT_TARGET] WARNING: $1\033[0m"
+    KAVRAKILAB_INSTALL_WARNINGS="    [$KAVRAKILAB_INSTALL_CURRENT_TARGET] $1\n${KAVRAKILAB_INSTALL_WARNINGS}"
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function kavrakilab-install-info {
+    echo -e "\e[0;36m[$KAVRAKILAB_INSTALL_CURRENT_TARGET] INFO: $1\033[0m"
+    KAVRAKILAB_INSTALL_INFOS="    [$KAVRAKILAB_INSTALL_CURRENT_TARGET] $1\n${KAVRAKILAB_INSTALL_INFOS}"
+}
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function kavrakilab-install-target {
+    local target=$1
+
+    #echo $target
+
+    local parent_target=$KAVRAKILAB_INSTALL_CURRENT_TARGET
+
+    # If the target has a parent target, add target as a dependency to the parent target
+    if [ -n "$parent_target" ]
+    then
+        echo "$target" >> $KAVRAKILAB_INSTALL_DEPENDENCIES_DIR/$parent_target
+        echo "$parent_target" >> $KAVRAKILAB_INSTALL_DEPENDENCIES_ON_DIR/$target
+        sort $KAVRAKILAB_INSTALL_DEPENDENCIES_ON_DIR/$target -u -o $KAVRAKILAB_INSTALL_DEPENDENCIES_ON_DIR/$target
+    fi
+
+    if [ ! -f $KAVRAKILAB_INSTALL_STATE_DIR/$target ]; then
+
+        if [ ! -d $KAVRAKILAB_INSTALL_TARGET_DIR/$target ]
+        then
+            kavrakilab-install-error "Target '$target' does not exist."
+        fi
+
+        local install_file=$KAVRAKILAB_INSTALL_TARGET_DIR/$target/install
+
+        KAVRAKILAB_INSTALL_CURRENT_TARGET_DIR=$KAVRAKILAB_INSTALL_TARGET_DIR/$target
+        KAVRAKILAB_INSTALL_CURRENT_TARGET=$target
+
+        # Empty the target's dependency file        
+        > $KAVRAKILAB_INSTALL_DEPENDENCIES_DIR/$target
+
+        if [ -f $install_file.yaml ]
+        then
+            local cmds=`$KAVRAKILAB_DIR/installer/scripts/parse-install-yaml $install_file.yaml`
+            if [ $? -eq 0 ]; then
+                for cmd in $cmds
+                do
+                    ${cmd//^/ }
+                done
+            else
+                kavrakilab-install-error "Invalid install.yaml: $cmd"
+            fi 
+        fi
+
+        if [ -f $install_file.bash ]
+        then
+            source $install_file.bash
+        fi
+
+        touch $KAVRAKILAB_INSTALL_STATE_DIR/$target
+    fi
+
+    KAVRAKILAB_INSTALL_CURRENT_TARGET=$parent_target
+    KAVRAKILAB_INSTALL_CURRENT_TARGET_DIR=$KAVRAKILAB_INSTALL_TARGET_DIR/$parent_target
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function kavrakilab-install-sys {
+    source=$1
+    KAVRAKILAB_INSTALL_SYSTEMS="$source $KAVRAKILAB_INSTALL_SYSTEMS"
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function _show_update_message
+{
+    if [ -n "$2" ]
+    then
+        echo -e "\n    \033[1m$1\033[0m"
+        echo "--------------------------------------------------"
+        echo -e "$2"
+        echo "--------------------------------------------------"
+        echo ""
+    else
+        echo -e "\033[1m$1\033[0m: up-to-date"
+    fi
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function kavrakilab-install-svn
+{      
+    if [ ! -d $2 ]; then 
+        res=$(svn co $1 $2 --trust-server-cert --non-interactive 2>&1)
+    else
+        res=$(svn up $2 --trust-server-cert --non-interactive 2>&1)
+        if echo "$res" | grep -q "At revision";
+        then
+            res=
+        fi
+    fi
+
+    _show_update_message $KAVRAKILAB_INSTALL_CURRENT_TARGET "$res"     
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+KAVRAKILAB_INSTALL_GIT_PULL_Q=()
+function kavrakilab-install-git
+{
+    if [ ! -d $2 ]; then 
+        res=$(git clone $1 $2 2>&1)
+    else
+
+        # Check if we have already pulled the repo
+        if [[ $KAVRAKILAB_INSTALL_GIT_PULL_Q =~ $2 ]]
+        then
+            # We have already pulled this repo, skip it
+            res=
+        else
+            local mem_pwd=$PWD
+            cd $2
+
+            res=$(git pull --ff-only --prune 2>&1)
+
+            if [ ! $? -eq 0 ]
+            then
+                kavrakilab-install-warning "$res"
+            fi
+            KAVRAKILAB_INSTALL_GIT_PULL_Q+=$2
+
+            cd $mem_pwd
+
+            if [[ $res == "Already up-to-date"* ]]
+            then
+                res=
+            fi
+        fi
+    fi
+
+    local version=$3
+    if [ -n "$version" ];
+    then
+        mem_pwd=$PWD
+        cd $2
+        cres=$(git checkout $version 2>&1)
+        if [[ $cres == "Already on "* ]]
+        then
+            cres=
+        fi
+
+        res=$res$cres
+        cd $mem_pwd 
+    fi    
+
+    _show_update_message $KAVRAKILAB_INSTALL_CURRENT_TARGET "$res"     
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function kavrakilab-install-apply-patch
+{
+    if [ -z "$1" ]
+    then
+        kavrakilab-install-error "Invalid kavrakilab-install-apply-patch call: needs patch file as argument."
+    fi
+
+    if [ -z "$KAVRAKILAB_INSTALL_PKG_DIR" ]
+    then
+        kavrakilab-install-error "Invalid kavrakilab-install-apply-patch call: package directory is unknown."        
+    fi
+
+    patch_file=$KAVRAKILAB_INSTALL_CURRENT_TARGET_DIR/$1
+
+    if [ ! -f $patch_file ]
+    then
+        kavrakilab-install-error "Invalid kavrakilab-install-apply-patch call: patch file '$1' does not exist."  
+    fi
+    
+    patch -s -N -r - -p0 -d $KAVRAKILAB_INSTALL_PKG_DIR < $patch_file
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function kavrakilab-install-cp
+{
+    if [ -z "$2" ]
+    then
+        kavrakilab-install-error "Invalid kavrakilab-install-cp call: needs two arguments (source and target)."
+    fi
+
+    file=$KAVRAKILAB_INSTALL_CURRENT_TARGET_DIR/$1
+
+    if [ ! -f $file ]
+    then
+        kavrakilab-install-error "Invalid kavrakilab-install-cp call: file '$1' does not exist."  
+    fi
+
+    cp $file $2
+    echo "cp $file $2"
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+# Reads SOURCE_FILE and looks in TARGET_FILE for the first and last line of SOURCE_FILE. If these
+# are not found, SOURCE_FILE is appended to TARGET_FILE. Otherwise, the appearance of the first and
+# last line of SOURCE_FILE in TARGET_FILE, and everything in between, is replaced by the contents
+# of SOURCE_FILE.
+# This is useful for adding text blocks to files and allowing to change only that part of the file
+# on a next update. It is advised to start and end SOURCE_FILE with unique tags, e.g.:
+#
+#    # BEGIN TU/E BLOCK
+#    .... some text ...
+#    # END TU/E BLOCK
+#
+function kavrakilab-install-add-text
+{
+    if [ -z "$2" ]
+    then
+        kavrakilab-install-error "Invalid kavrakilab-install-add-text call. Usage: kavrakilab-install-add-text SOURCE_FILE TARGET_FILE"
+    fi
+
+    local source_file=$KAVRAKILAB_INSTALL_CURRENT_TARGET_DIR/$1
+    local target_file=$2
+
+    if [ ! -f $source_file ]
+    then
+        kavrakilab-install-error "kavrakilab-install-add-text: No such file: $source_file"
+    fi
+
+    if [ ! -f $target_file ]
+    then
+        kavrakilab-install-error "kavrakilab-install-add-text: No such file: $target_file"
+    fi
+
+    local begin_tag=$(head -n 1 $source_file)
+    local end_tag=$(tail -n 1 $source_file)
+    local text=$(cat $source_file)
+
+    if ! grep -q "$begin_tag" $target_file
+    then
+        echo -e "$text" >> $target_file
+    else
+        sed -e "/^$end_tag/r $source_file" -e "/^$begin_tag/,/^$end_tag/d" $target_file > $target_file.tmp
+        mv $target_file.tmp $target_file
+    fi
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function kavrakilab-install-system
+{
+    if [ -z "$1" ]
+    then
+        kavrakilab-install-error "Invalid kavrakilab-install-system call: needs package as argument."
+    fi
+
+    KAVRAKILAB_INSTALL_SYSTEMS="$1 $KAVRAKILAB_INSTALL_SYSTEMS"
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+function kavrakilab-install-pkg
+{
+    type=$1
+    source=$2
+    sub_dir=$3
+    version=$4
+
+    if [ -z "$2" ]
+    then
+        kavrakilab-install-error "kavrakilab-install-pkg needs at least two arguments: source type (git, svn, ...) and source (url)"
+    fi
+
+    local pkgs_dir=$KAVRAKILAB_ENV_DIR/pkgs
+    mkdir -p $pkgs_dir
+
+    local repos_dir=$KAVRAKILAB_REPOS_DIR/$source
+    # replace spaces with underscores
+    repos_dir=${repos_dir// /_}
+    # now, clean out anything that's not alphanumeric or an underscore
+    repos_dir=${repos_dir//[^a-zA-Z0-9\/\.-]/_}
+
+    if [ "$type" = "git" ]
+    then
+        kavrakilab-install-git $source $repos_dir $version
+        echo "git clone $source" >> $INSTALL_DETAILS_FILE
+        [ "$version" ] && echo "# NOTE: check-out version $version" >> $INSTALL_DETAILS_FILE
+    elif [ "$type" = "svn" ]
+    then
+        kavrakilab-install-svn $source $repos_dir $version
+        if [ "$version" ]
+        then
+            echo "svn co $source -r $version" >> $INSTALL_DETAILS_FILE
+        else
+            echo "svn co $source" >> $INSTALL_DETAILS_FILE
+        fi
+    else
+        kavrakilab-install-error "Unknown install type: '${type}'"
+    fi
+
+    local pkg_name=$KAVRAKILAB_INSTALL_CURRENT_TARGET
+    local pkg_dir=$pkgs_dir/$pkg_name
+
+    if [ ! -d $repos_dir ]
+    then
+        kavrakilab-install-error "Checking out $source was not successful."
+    fi
+
+    if [ ! -d $repos_dir/$sub_dir ]
+    then
+        kavrakilab-install-error "Subdirectory '$sub_dir' does not exist for URL '$source'."
+    fi
+
+    if [ -L $pkg_dir ]
+    then
+        # Test if the current symbolic link points to the same repository dir. If not, give a warning
+        # because it means the source URL has changed
+        if [ ! $pkg_dir -ef $repos_dir/$sub_dir ]
+        then
+            kavrakilab-install-info "URL has changed to $source/$subdir"
+            rm $pkg_dir
+            ln -s $repos_dir/$sub_dir $pkg_dir
+        fi
+    elif [ ! -d $pkg_dir ]
+    then        
+        # Create a symbolic link to the system workspace
+        ln -s $repos_dir/$sub_dir $pkg_dir
+    fi              
+
+    KAVRAKILAB_INSTALL_PKG_DIR=$ros_pkg_dir    
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function kavrakilab-install-ros {
+    type=$1
+    source=$2
+    sub_dir=$3
+    version=$4
+
+    [ -n "$KAVRAKILAB_ROS_DISTRO" ] || kavrakilab-install-error "Environment variable 'KAVRAKILAB_ROS_DISTRO' is not set."
+
+    local ros_pkg_name=${KAVRAKILAB_INSTALL_CURRENT_TARGET#ros-}
+
+    # First of all, make sure ROS itself is installed
+    kavrakilab-install-target ros
+
+    if [ "$type" = "system" ]; then
+        KAVRAKILAB_INSTALL_SYSTEMS="ros-$KAVRAKILAB_ROS_DISTRO-$source $KAVRAKILAB_INSTALL_SYSTEMS"
+        return
+    fi
+
+    if [ -z $ROS_PACKAGE_INSTALL_DIR ]; then
+        kavrakilab-install-error "Environment variable ROS_PACKAGE_INSTALL_DIR not set."
+    fi
+
+    # Make sure the ROS package install dir exists
+    mkdir -p $ROS_PACKAGE_INSTALL_DIR
+
+    local ros_pkg_dir=$ROS_PACKAGE_INSTALL_DIR/$ros_pkg_name
+    local repos_dir=$KAVRAKILAB_REPOS_DIR/$source
+    # replace spaces with underscores
+    repos_dir=${repos_dir// /_}
+    # now, clean out anything that's not alphanumeric or an underscore
+    repos_dir=${repos_dir//[^a-zA-Z0-9\/\.-]/_}
+    #mkdir -p $repos_dir/..
+
+    # For backwards compatibility: if the ros_pkg_dir already exists and is NOT
+    # a symbolic link, then update this direcory instead of creating a symbolic
+    # link from the repos directory. In other words, the ros_pkg_dir becomes the
+    # repos_dir
+    if [[ -d $ros_pkg_dir && ! -L $ros_pkg_dir ]]
+    then
+        repos_dir=$ros_pkg_dir
+        # replace spaces with underscores
+        repos_dir=${repos_dir// /_}
+        # now, clean out anything that's not alphanumeric or an underscore
+        repos_dir=${repos_dir//[^a-zA-Z0-9\/\.-]/_}
+    fi
+
+    if [ "$type" = "git" ]; then
+        kavrakilab-install-git $source $repos_dir $version
+        echo "git clone $source" >> $INSTALL_DETAILS_FILE
+        [ "$version" ] && echo "# NOTE: check-out version $version" >> $INSTALL_DETAILS_FILE
+    elif [ "$type" = "svn" ]; then
+        kavrakilab-install-svn $source $repos_dir $version
+        if [ "$version" ]; then
+            echo "svn co $source -r $version" >> $INSTALL_DETAILS_FILE
+        else
+            echo "svn co $source" >> $INSTALL_DETAILS_FILE
+        fi
+    else
+        kavrakilab-install-error "Unknown ros install type: '${type}'"
+    fi
+
+    if [ -d $repos_dir ]; then
+
+        if [ ! -d $repos_dir/$sub_dir ]
+        then
+            kavrakilab-install-error "Subdirectory '$sub_dir' does not exist for URL '$source'."
+        fi
+
+        if [ -L $ros_pkg_dir ]
+        then
+            # Test if the current symbolic link points to the same repository dir. If not, give a warning
+            # because it means the source URL has changed
+            if [ ! $ros_pkg_dir -ef $repos_dir/$sub_dir ]
+            then
+                kavrakilab-install-info "URL has changed to $source/$subdir"
+                rm $ros_pkg_dir
+                ln -s $repos_dir/$sub_dir $ros_pkg_dir
+            fi
+        elif [ ! -d $ros_pkg_dir ]
+        then        
+            # Create a symbolic link to the system workspace
+            ln -s $repos_dir/$sub_dir $ros_pkg_dir
+        fi
+      
+        if  [ -f $ros_pkg_dir/package.xml ]; then
+            # Catkin
+
+            deps=`$KAVRAKILAB_INSTALL_SCRIPTS_DIR/parse-ros-package-deps $ros_pkg_dir/package.xml`
+
+            for dep in $deps
+            do
+                kavrakilab-install-target ros-$dep
+            done
+
+        else
+            kavrakilab-install-warning "Does not contain a valid ROS package.xml."
+        fi        
+        
+    else
+        kavrakilab-install-error "Checking out $source was not successful."
+    fi
+
+    KAVRAKILAB_INSTALL_PKG_DIR=$ros_pkg_dir
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function generate_setup_file
+{
+    # Check whether this target was already added to the setup
+    if [[ "$KAVRAKILAB_SETUP_TARGETS" == *" $1 "* ]];
+    then
+        return    
+    fi
+
+    # Check if the dependency file exists. If not, return
+    DEP=$KAVRAKILAB_INSTALL_DEPENDENCIES_DIR/$1
+    if [ ! -f $DEP ]
+    then
+        return
+    fi
+
+    # Recursively add a setup for each dependency
+    deps=`cat $KAVRAKILAB_INSTALL_DEPENDENCIES_DIR/$1`
+    for dep in $deps
+    do
+        if [ -f $KAVRAKILAB_INSTALL_TARGETS_DIR/$dep/setup ]
+        then
+            generate_setup_file $dep
+        fi
+    done
+
+    local kavrakilab_setup_file=$KAVRAKILAB_INSTALL_TARGETS_DIR/$1/setup
+    if [ -f $kavrakilab_setup_file ]
+    then
+        echo "source $kavrakilab_setup_file" >> $KAVRAKILAB_ENV_DIR/.env/setup/target_setup.bash
+    fi
+
+    KAVRAKILAB_SETUP_TARGETS=" $1$KAVRAKILAB_SETUP_TARGETS"
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+INSTALL_DETAILS_FILE=/tmp/kavrakilab-get-details-`randid`
+> $INSTALL_DETAILS_FILE
+
+# CATKIN PACKAGES
+ROS_PACKAGE_INSTALL_DIR=$KAVRAKILAB_SYSTEM_DIR/src
+
+KAVRAKILAB_INSTALL_TARGET_DIR=$KAVRAKILAB_INSTALL_TARGETS_DIR
+KAVRAKILAB_INSTALL_SCRIPTS_DIR=$KAVRAKILAB_DIR/installer/scripts
+
+KAVRAKILAB_INSTALL_STATE_DIR=/tmp/kavrakilab-installer/`randid`
+mkdir -p $KAVRAKILAB_INSTALL_STATE_DIR
+
+KAVRAKILAB_INSTALL_TEMP_DIR=/tmp/kavrakilab-installer/`randid`
+mkdir -p $KAVRAKILAB_INSTALL_TEMP_DIR
+
+KAVRAKILAB_INSTALL_SYSTEMS=
+
+KAVRAKILAB_INSTALL_WARNINGS=
+KAVRAKILAB_INSTALL_INFOS=
+
+if [ -z $1 ]
+then
+    # If no targets are provided, update all installed targets
+    targets=`ls $KAVRAKILAB_INSTALL_INSTALLED_DIR`    
+else
+    targets=$@
+fi
+
+for target in $targets
+do
+    if [ -d $KAVRAKILAB_INSTALL_TARGET_DIR/$target ]
+    then
+        # Mark as installed
+        touch $KAVRAKILAB_INSTALL_INSTALLED_DIR/$target
+    fi
+
+    kavrakilab-install-target $target    
+done
+
+# (Re-)generate setup file
+mkdir -p $KAVRAKILAB_ENV_DIR/.env/setup
+echo "# This file was auto-generated by kavrakilab-install. Do not change this file." > $KAVRAKILAB_ENV_DIR/.env/setup/target_setup.bash
+
+mkdir -p $KAVRAKILAB_INSTALL_DEPENDENCIES_DIR
+installed_targets=`ls $KAVRAKILAB_INSTALL_DEPENDENCIES_DIR`
+KAVRAKILAB_SETUP_TARGETS=" "
+for t in $installed_targets
+do
+    generate_setup_file $t
+done
+
+# Display infos
+if [ -n "$KAVRAKILAB_INSTALL_INFOS" ]; then
+    echo -e "\e[0;36m\nSome information you may have missed:\n\n$KAVRAKILAB_INSTALL_INFOS\033[0m"
+fi
+
+# Display warnings
+if [ -n "$KAVRAKILAB_INSTALL_WARNINGS" ]; then
+    echo -e "\033[33;5;1m\nOverview of warnings:\n\n$KAVRAKILAB_INSTALL_WARNINGS\033[0m"
+fi
+
+# Remove temp directories
+rm /tmp/kavrakilab-installer -rf
+
+if [ -n "$KAVRAKILAB_INSTALL_SYSTEMS" ]; then
+
+    echo -e "\nsudo apt-get install $KAVRAKILAB_INSTALL_SYSTEMS" >> $INSTALL_DETAILS_FILE
+
+    pkgs_to_install=
+    for pkg in $KAVRAKILAB_INSTALL_SYSTEMS
+    do
+        if ! dpkg -s $pkg &> /dev/null
+        then
+            pkgs_to_install="$pkgs_to_install $pkg"
+        fi
+    done
+
+    if [ -n "$pkgs_to_install" ]
+    then    
+		echo -e "Going to run the following command:\n"
+		echo "sudo apt-get install -y$pkgs_to_install"
+        sudo apt-get install -y $pkgs_to_install
+    fi
+fi
+
+wait

@@ -1,0 +1,28 @@
+#!/bin/bash
+_kavrakilab-check-env-vars || return 1
+
+# Update installer
+if [ ! -d $KAVRAKILAB_DIR ]
+then 
+    git clone $KAVRAKILAB_ENV_GIT_REPOSITORY $KAVRAKILAB_DIR
+else
+    mem_pwd=$PWD
+    cd $KAVRAKILAB_DIR
+    echo -en "Updating tno-get... "
+    echo ""    
+    git pull --ff-only --prune
+
+    error_code=$?
+	cd $mem_pwd
+
+    if [ ! $error_code -eq 0 ]
+    then
+        echo ""
+        echo "[tno-get] Could not update tno-get. Aborting"
+        exit 1
+    fi
+fi
+
+# Run installer
+source $KAVRAKILAB_DIR/installer/scripts/tno-install-impl $@
+exit $?
