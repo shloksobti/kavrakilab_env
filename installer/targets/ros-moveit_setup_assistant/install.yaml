@@ -3,4 +3,4 @@
       type: git
       url: git@github.com:KavrakiLab/moveit.git
       version: kinetic-devel
-      sub-dir: moveit_core
+      sub-dir: moveit_setup_assistant
