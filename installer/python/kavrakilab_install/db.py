@@ -1,7 +1,7 @@
 import os
 import yaml
 
-TARGETS_DIR = os.environ['HOME'] + "/.tue/installer/targets/"
+TARGETS_DIR = os.environ['HOME'] + "/.kavrakilab/installer/targets/"
 
 def all_targets():
     if not os.path.isdir(TARGETS_DIR):

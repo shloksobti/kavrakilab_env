@@ -1,1 +1,1 @@
-tno-install-system libconsole-bridge-dev
+kavrakilab-install-system libconsole-bridge-dev

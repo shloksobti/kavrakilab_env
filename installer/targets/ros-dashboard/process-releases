@@ -19,7 +19,7 @@ then
 
     if [[ -f "$TUE_BIN/dashboard/$TAG" ]]
     then
-        echo -e "dashboard:\t\tno updates found"
+        echo -e "dashboard:\t\kavrakilab updates found"
     else
         echo -e "dashboard:\t\tnew version $TAG found"
         mkdir -p "$TUE_BIN/dashboard"
@@ -36,7 +36,7 @@ then
 
     if [[ -f "$TUE_BIN/dashboard-alpha/$TAG" ]]
     then
-        echo -e "dashboard-alpha:\tno updates found"
+        echo -e "dashboard-alpha:\kavrakilab updates found"
     else
         echo -e "dashboard-alpha:\tnew version $TAG found"
         mkdir -p "$TUE_BIN/dashboard-alpha"

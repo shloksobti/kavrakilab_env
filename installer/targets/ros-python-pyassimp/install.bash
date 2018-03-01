@@ -1,1 +1,1 @@
-tno-install-system python-pyassimp
+kavrakilab-install-system python-pyassimp

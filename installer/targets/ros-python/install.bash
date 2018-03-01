@@ -1,1 +1,1 @@
-tno-install-system python
+kavrakilab-install-system python

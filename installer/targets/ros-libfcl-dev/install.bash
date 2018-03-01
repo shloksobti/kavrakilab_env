@@ -1,1 +1,1 @@
-tno-install-system libfcl-dev
+kavrakilab-install-system libfcl-dev
