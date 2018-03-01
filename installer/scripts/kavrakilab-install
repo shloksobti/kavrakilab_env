@@ -8,7 +8,7 @@ then
 else
     mem_pwd=$PWD
     cd $KAVRAKILAB_DIR
-    echo -en "Updating tno-get... "
+    echo -en "Updating kavrakilab-get... "
     echo ""    
     git pull --ff-only --prune
 
@@ -18,11 +18,11 @@ else
     if [ ! $error_code -eq 0 ]
     then
         echo ""
-        echo "[tno-get] Could not update tno-get. Aborting"
+        echo "[kavrakilab-get] Could not update kavrakilab-get. Aborting"
         exit 1
     fi
 fi
 
 # Run installer
-source $KAVRAKILAB_DIR/installer/scripts/tno-install-impl $@
+source $KAVRAKILAB_DIR/installer/scripts/kavrakilab-install-impl $@
 exit $?
