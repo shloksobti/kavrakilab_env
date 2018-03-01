@@ -1,0 +1,63 @@
+#!/bin/bash
+
+if [[ -z $KAVRAKILAB_DIR ]]
+then
+    # Some requirements
+    sudo apt-get install -y wget make software-properties-common
+
+    # Cleanup tmp files
+    echo "[kavrakilab_env install] Cleanup tmp files"
+    rm -rf ~/.kavrakilab/user
+
+    echo "[kavrakilab_env install] remove ros dir"
+    mv ~/ros ~/ros_backup_`date +%Y-%m-%d_%H_%M_%S`
+
+    # Source the installer commands
+    echo "[kavrakilab_env install] Source environment"
+    source ~/.kavrakilab/setup.bash
+
+    # Get the Ubuntu distro variables
+    . /etc/lsb-release
+
+    # Set ROS version
+    if [ $DISTRIB_CODENAME = "xenial" ]; then
+        KAVRAKILAB_ROS_DISTRO="kinetic"
+    elif [ $DISTRIB_CODENAME = "trusty" ]; then
+        KAVRAKILAB_ROS_DISTRO="indigo"
+    else
+        echo "I don't know a ROS distro for $DISTRIB_CODENAME, exiting..."
+        exit 1
+    fi
+
+    # Create ros environment directory
+    mkdir -p ~/ros/$KAVRAKILAB_ROS_DISTRO
+
+    # Initialize ros environment directory
+    echo "[kavrakilab_env install] Create ros indigo environment"
+    kavrakilab-env init ros-$KAVRAKILAB_ROS_DISTRO ~/ros/$KAVRAKILAB_ROS_DISTRO
+
+    # Set the correct ROS version for this environment
+    mkdir -p ~/ros/$KAVRAKILAB_ROS_DISTRO/.env/setup
+    echo "export KAVRAKILAB_ROS_DISTRO=$KAVRAKILAB_ROS_DISTRO" > ~/ros/$KAVRAKILAB_ROS_DISTRO/.env/setup/user_setup.bash
+
+    # Set this environment as default
+    kavrakilab-env set-default ros-$KAVRAKILAB_ROS_DISTRO
+
+    # Add to bashrc
+    echo "[kavrakilab_env install] Adding ~/.kavrakilab/setup.bash to your ~/.bashrc"
+    echo -e "source ~/.kavrakilab/setup.bash" >> ~/.bashrc
+
+    # Activate the default environment
+    source ~/.kavrakilab/setup.bash
+
+    # Install git
+    kavrakilab-get install git
+
+    # Install ros
+    kavrakilab-get install ros
+
+    echo "[kavrakilab_env install] Now restart your shell and see your new git ps1."
+
+else
+    echo "[kavrakilab_env install] I see that the KAVRAKILAB_DIR environment variable exists. Please make sure you have a clean environment and restart the installer again."
+fi

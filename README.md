@@ -15,7 +15,7 @@ sudo apt-get install git
 
 Now you can make sure you clone the kavrakilab_env package manager on to you computer:
 ```bash
-git clone git@ci.kavrakilab.nl:ivs/kavrakilab-env.git ~/.kavrakilab
+git clone git@bitbucket.org:juandhv/kavrakilab-env.git ~/.kavrakilab
 ```
 Once you have the package manager you can install ROS and setup the ROS environment by typing the following:
 ```bash
