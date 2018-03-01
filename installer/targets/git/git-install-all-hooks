@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if git hooks &> /dev/null; then 
+
+    echo "Updating git hooks for all repos..."
+
+    cd $KAVRAKILAB_ENV_DIR/system/src
+
+    for D in `find . -mindepth 1 -maxdepth 1 -type d -follow` $KAVRAKILAB_DIR
+    do
+        pushd "$D" > /dev/null
+        if git rev-parse --git-dir > /dev/null 2>&1;
+        then
+            #echo "installing git hooks into \"$D\""
+            git hooks --install > /dev/null
+        fi
+        popd > /dev/null
+    done
+else
+
+    echo "git hooks is not installed"
+
+fi
