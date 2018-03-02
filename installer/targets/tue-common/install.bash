@@ -1,1 +1,1 @@
-tue-install-cp rsettings_file ~/.tue/.rsettings
+kavrakilab-install-cp rsettings_file ~/.tue/.rsettings

@@ -38,7 +38,7 @@ then
     fi
 fi
 
-tue-install-system vim
+kavrakilab-install-system vim
 
 # TODO: when should we run this (vim needs to be installed)
 # sudo update-alternatives --set editor /usr/bin/vim.basic

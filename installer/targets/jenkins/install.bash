@@ -6,4 +6,4 @@ then
 	sudo apt-get update
 fi
 
-tue-install-system jenkins
+kavrakilab-install-system jenkins

@@ -1,6 +1,6 @@
 - type: ros
   source:
       type: git
-      url: git@github.com:KavrakiLab/moveit.git
+      url: https://github.com/KavrakiLab/moveit.git
       version: kinetic-devel
       sub-dir: moveit_ros

@@ -1,4 +1,6 @@
 - type: ros
   source:
-    type: system
-    name: moveit-plugins
+      type: git
+      url: https://github.com/KavrakiLab/moveit.git
+      version: kinetic-devel
+      sub-dir: moveit_plugins

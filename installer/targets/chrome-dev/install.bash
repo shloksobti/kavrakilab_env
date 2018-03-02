@@ -7,4 +7,4 @@ then
     sudo apt-get update
 fi
 
-tue-install-system google-chrome-unstable
+kavrakilab-install-system google-chrome-unstable

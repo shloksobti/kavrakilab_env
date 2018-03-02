@@ -10,4 +10,4 @@ then
 fi
 
 # install Gazebo
-tue-install-system gazebo
+kavrakilab-install-system gazebo

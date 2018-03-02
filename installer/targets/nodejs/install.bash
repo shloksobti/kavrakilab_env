@@ -9,4 +9,4 @@ then
     sudo apt-get --assume-yes install nodejs
 fi
 
-tue-install-system nodejs
+kavrakilab-install-system nodejs

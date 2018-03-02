@@ -1,1 +1,1 @@
-tue-install-cp ros-bash-and-run.sh ~/.ros-bash-and-run.sh
+kavrakilab-install-cp ros-bash-and-run.sh ~/.ros-bash-and-run.sh

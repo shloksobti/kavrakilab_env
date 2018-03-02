@@ -3,6 +3,6 @@ for target in $targets
 do
     if [[ $target != "tue-all" ]]
     then
-        tue-install-target $target
+        kavrakilab-install-target $target
     fi
 done

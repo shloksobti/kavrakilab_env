@@ -1,4 +1,4 @@
 - type: ros
   source:
-    type: system
-    name: ompl
+      type: git
+      url: https://github.com/KavrakiLab/catkin_ompl.git

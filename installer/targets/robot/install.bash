@@ -1,5 +1,5 @@
 ### Make sure remote launching works ###
-tue-install-cp ros-bash-and-run.sh ~/.ros-bash-and-run.sh
+kavrakilab-install-cp ros-bash-and-run.sh ~/.ros-bash-and-run.sh
 chmod +x ~/.ros-bash-and-run.sh
 
 ### Allow user to access serial interfaces ###

@@ -7,4 +7,4 @@ then
     sudo apt-get update
 fi
 
-tue-install-system dropbox
+kavrakilab-install-system dropbox

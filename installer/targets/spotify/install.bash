@@ -8,4 +8,4 @@ then
     sudo apt-get update
 fi
 
-tue-install-system spotify-client
+kavrakilab-install-system spotify-client
