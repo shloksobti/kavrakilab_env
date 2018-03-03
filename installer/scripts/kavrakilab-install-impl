@@ -173,7 +173,7 @@ KAVRAKILAB_INSTALL_GIT_PULL_Q=()
 function kavrakilab-install-git
 {
     if [ ! -d $2 ]; then 
-        res=$(git clone $1 $2 2>&1)
+        res=$(git clone --recurse-submodules $1 $2 2>&1)
     else
 
         # Check if we have already pulled the repo
@@ -492,7 +492,7 @@ function kavrakilab-install-ros {
             done
 
         else
-            kavrakilab-install-warning "Does not contain a valid ROS package.xml."
+        	check_dependencies $ros_pkg_dir
         fi        
         
     else
@@ -500,6 +500,32 @@ function kavrakilab-install-ros {
     fi
 
     KAVRAKILAB_INSTALL_PKG_DIR=$ros_pkg_dir
+}
+
+function check_dependencies {
+	ros_pkg_dir=$1
+	
+	#echo $ros_pkg_dir
+	
+	if  [ -f $ros_pkg_dir/package.xml ]; then
+        # Catkin
+
+        deps=`$KAVRAKILAB_INSTALL_SCRIPTS_DIR/parse-ros-package-deps $dir/package.xml`
+
+        for dep in $deps
+        do
+            kavrakilab-install-target ros-$dep
+        done
+	
+	else
+		for dir in $ros_pkg_dir/*/
+		do
+			if [ -d "$dir" ]; then
+				#echo $dir
+				check_dependencies $dir
+			fi
+		done
+	fi
 }
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
