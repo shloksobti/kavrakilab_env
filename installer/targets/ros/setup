@@ -2,7 +2,7 @@
 
 if [ -z "$KAVRAKILAB_ROS_DISTRO" ]
 then
-    echo "[tue ros setup] KAVRAKILAB_ROS_DISTRO was not set"
+    echo "[kavrakilab ros setup] KAVRAKILAB_ROS_DISTRO was not set"
     return
 fi
 

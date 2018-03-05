@@ -1,6 +1,6 @@
 if [ -z "$KAVRAKILAB_ROS_DISTRO" ]
 then
-    echo "[tue ros install] KAVRAKILAB_ROS_DISTRO was not set"
+    echo "[kavrakilab ros install] KAVRAKILAB_ROS_DISTRO was not set"
     return
 fi
 
@@ -15,7 +15,7 @@ then
 
     sudo apt-get update
 
-    # Install basic ROS packages. All other packages will be installed using tue-rosdep
+    # Install basic ROS packages. All other packages will be installed using kavrakilab-rosdep
     sudo apt-get install  --assume-yes ros-$KAVRAKILAB_ROS_DISTRO-ros-base cmake python-catkin-pkg python-empy python-nose python-setuptools libgtest-dev build-essential python-catkin-tools
 
     sudo rosdep init || true # make sure it always succeeds, even if rosdep init was already called
