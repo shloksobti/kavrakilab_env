@@ -94,12 +94,34 @@ function kavrakilab-make
 
 function kavrakilab-make-system
 {
-    catkin_make_isolated --directory $_KAVRAKILAB_CATKIN_SYSTEM_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@	
+	case $(cat $_KAVRAKILAB_CATKIN_SYSTEM_DIR/devel/.built_by) in
+	'catkin_make')
+		catkin_make --directory $_KAVRAKILAB_CATKIN_SYSTEM_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@
+		;;
+	'catkin build')
+		catkin build --workspace $_KAVRAKILAB_CATKIN_SYSTEM_DIR $@
+		;;
+	'')
+		catkin init --workspace $_KAVRAKILAB_CATKIN_SYSTEM_DIR $@
+		catkin build --workspace $_KAVRAKILAB_CATKIN_SYSTEM_DIR $@
+		;;
+	esac
 }
 
 function kavrakilab-make-dev
 {
-    catkin_make --directory $_KAVRAKILAB_CATKIN_DEV_DIR -DCMAKE_BUILD_TYPE=Debug $@
+	case $(cat $_KAVRAKILAB_CATKIN_DEV_DIR/devel/.built_by) in
+	'catkin_make')
+		catkin_make --directory $_KAVRAKILAB_CATKIN_DEV_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@
+		;;
+	'catkin build')
+		catkin build --workspace $_KAVRAKILAB_CATKIN_DEV_DIR $@
+		;;
+	'')
+		catkin init --workspace $_KAVRAKILAB_CATKIN_DEV_DIR $@
+		catkin build --workspace $_KAVRAKILAB_CATKIN_DEV_DIR $@
+		;;
+	esac
 }
 
 function kavrakilab-make-dev-isolated
