@@ -77,7 +77,8 @@ function kavrakilab-make
 
     if [ -n "$KAVRAKILAB_ROS_DISTRO" ] && [ -d $_KAVRAKILAB_CATKIN_SYSTEM_DIR ]
     then
-        catkin_make --directory $_KAVRAKILAB_CATKIN_SYSTEM_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@
+        #catkin_make --directory $_KAVRAKILAB_CATKIN_SYSTEM_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@
+        catkin build --workspace $_KAVRAKILAB_CATKIN_SYSTEM_DIR $@
     fi
 }
 
