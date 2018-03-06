@@ -33,7 +33,7 @@ then
     mkdir -p ~/ros/$KAVRAKILAB_ROS_DISTRO
 
     # Initialize ros environment directory
-    echo "[kavrakilab_env install] Create ros indigo environment"
+    echo "[kavrakilab_env install] Create ros $KAVRAKILAB_ROS_DISTRO environment"
     kavrakilab-env init ros-$KAVRAKILAB_ROS_DISTRO ~/ros/$KAVRAKILAB_ROS_DISTRO
 
     # Set the correct ROS version for this environment

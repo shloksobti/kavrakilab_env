@@ -6,7 +6,7 @@ then
     return
 fi
 
-#source /opt/ros/$KAVRAKILAB_ROS_DISTRO/setup.bash
+source /opt/ros/$KAVRAKILAB_ROS_DISTRO/setup.bash
 
 KAVRAKILAB_SYSTEM_DIR=$KAVRAKILAB_ENV_DIR/system
 KAVRAKILAB_DEV_DIR=$KAVRAKILAB_ENV_DIR/dev

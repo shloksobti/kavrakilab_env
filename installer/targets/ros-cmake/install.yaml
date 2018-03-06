@@ -1,2 +1,4 @@
-- type: system
-  source: cmake
+- type: ros
+  source:
+    type: system
+    name: cmake-modules

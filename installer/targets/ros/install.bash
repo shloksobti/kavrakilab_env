@@ -16,7 +16,7 @@ then
     sudo apt-get update
 
     # Install basic ROS packages. All other packages will be installed using kavrakilab-rosdep
-    sudo apt-get install  --assume-yes ros-$KAVRAKILAB_ROS_DISTRO-ros-base cmake python-catkin-pkg python-empy python-nose python-setuptools libgtest-dev build-essential python-catkin-tools
+    sudo apt-get install  --assume-yes ros-$KAVRAKILAB_ROS_DISTRO-desktop-full python-rosinstall python-wstool python-catkin-tools
 
     sudo rosdep init || true # make sure it always succeeds, even if rosdep init was already called
 
@@ -24,7 +24,6 @@ then
 fi
 
 source /opt/ros/$KAVRAKILAB_ROS_DISTRO/setup.bash
-
 KAVRAKILAB_SYSTEM_DIR=$KAVRAKILAB_ENV_DIR/system
 KAVRAKILAB_DEV_DIR=$KAVRAKILAB_ENV_DIR/dev
 
