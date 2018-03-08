@@ -1,0 +1,4 @@
+- type: ros
+  source:
+      type: git
+      url: https://github.com/mikeferguson/grasping_msgs.git
