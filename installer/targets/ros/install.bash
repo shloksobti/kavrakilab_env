@@ -33,8 +33,9 @@ then
     hash g++ 2> /dev/null || sudo apt-get install --assume-yes g++
     cd $KAVRAKILAB_SYSTEM_DIR
     catkin init
-    mkdir -p src
+    catkin config -a --cmake-args -DCMAKE_BUILD_TYPE=Release
     catkin build
+    touch $KAVRAKILAB_SYSTEM_DIR/devel/.catkin
     source $KAVRAKILAB_SYSTEM_DIR/devel/setup.bash
 fi
 
@@ -44,7 +45,11 @@ then
     hash g++ 2> /dev/null || sudo apt-get install --assume-yes g++
     cd $KAVRAKILAB_DEV_DIR
     catkin init
-    mkdir -p src
+    echo "catkin init"
+    echo "$KAVRAKILAB_SYSTEM_DIR/devel"
+    catkin config --extend $KAVRAKILAB_SYSTEM_DIR/devel
+    catkin config -a --cmake-args -DCMAKE_BUILD_TYPE=Release
     catkin build
+    touch $KAVRAKILAB_SYSTEM_DIR/devel/.catkin
     source $KAVRAKILAB_DEV_DIR/devel/setup.bash
 fi
