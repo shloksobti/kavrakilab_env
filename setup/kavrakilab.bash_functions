@@ -122,6 +122,7 @@ function kavrakilab-make-dev
 		catkin build --workspace $_KAVRAKILAB_CATKIN_DEV_DIR $@
 		;;
 	esac
+	source ~/.bashrc
 }
 
 function kavrakilab-make-dev-isolated
