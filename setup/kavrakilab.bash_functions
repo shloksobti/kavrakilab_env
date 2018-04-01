@@ -89,6 +89,7 @@ function kavrakilab-make
 			catkin build --workspace $_KAVRAKILAB_CATKIN_SYSTEM_DIR $@
 			;;
 		esac
+		source ~/.bashrc
     fi
 }
 

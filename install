@@ -56,6 +56,10 @@ then
     # Install ros
     kavrakilab-get install ros
 
+    # Install moveit
+    #kavrakilab-get install ros-moveit
+    #kavrakilab-make
+
     echo "[kavrakilab_env install] Now restart your shell and see your new git ps1."
 
 else

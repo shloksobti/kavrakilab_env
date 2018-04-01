@@ -13,10 +13,14 @@ then
 
     wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
 
+    sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+
+    wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+
     sudo apt-get update
 
     # Install basic ROS packages. All other packages will be installed using kavrakilab-rosdep
-    sudo apt-get install  --assume-yes ros-$KAVRAKILAB_ROS_DISTRO-desktop-full python-rosinstall python-wstool python-catkin-tools
+    sudo apt-get install  --assume-yes ros-$KAVRAKILAB_ROS_DISTRO-desktop python-rosinstall python-wstool python-catkin-tools terminator gazebo9
 
     sudo rosdep init || true # make sure it always succeeds, even if rosdep init was already called
 
