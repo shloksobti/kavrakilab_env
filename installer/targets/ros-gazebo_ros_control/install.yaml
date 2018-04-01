@@ -1,4 +1,4 @@
 - type: ros
   source:
     type: system
-    name: gazebo-ros-control
+    name: gazebo9-ros-control

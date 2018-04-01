@@ -1,4 +1,4 @@
 - type: ros
   source:
     type: system
-    name: gazebo-plugins
+    name: gazebo9-plugins
