@@ -1,4 +1,4 @@
 - type: ros
   source:
       type: git
-      url: git@bitbucket.org:juandhv/kavrakilab_moveit_tutorials.git
+      url: git@github.com:KavrakiLab/kavrakilab_moveit_tutorials.git
