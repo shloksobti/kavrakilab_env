@@ -1,6 +1,6 @@
 - type: ros
   source:
       type: git
-      url: https://github.com/KavrakiLab/robot_controllers.git
+      url: git@github.com:KavrakiLab/robot_controllers.git
       version: indigo-devel
       sub-dir: robot_controllers_msgs

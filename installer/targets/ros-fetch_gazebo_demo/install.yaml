@@ -1,6 +1,6 @@
 - type: ros
   source:
       type: git
-      url: https://github.com/KavrakiLab/fetch_gazebo.git
+      url: git@github.com:KavrakiLab/fetch_gazebo.git
       version: gazebo9
       sub-dir: fetch_gazebo_demo

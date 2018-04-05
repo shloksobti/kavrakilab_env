@@ -1,6 +1,6 @@
 - type: ros
   source:
       type: git
-      url: https://github.com/KavrakiLab/fetch_ros.git
+      url: git@github.com:KavrakiLab/fetch_ros.git
       version: indigo-devel
       sub-dir: fetch_moveit_config

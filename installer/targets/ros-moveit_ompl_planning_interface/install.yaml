@@ -1,4 +1,4 @@
 - type: ros
   source:
       type: git
-      url: https://github.com/KavrakiLab/moveit_ompl_planning_interface.git
+      url: git@github.com:KavrakiLab/moveit_ompl_planning_interface.git

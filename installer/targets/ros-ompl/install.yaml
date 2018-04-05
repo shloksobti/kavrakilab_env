@@ -1,4 +1,4 @@
 - type: ros
   source:
       type: git
-      url: https://github.com/KavrakiLab/catkin_ompl.git
+      url: git@github.com:KavrakiLab/catkin_ompl.git
