@@ -1,0 +1,5 @@
+- type: ros
+  source:
+      type: git
+      url: git@bitbucket.org:juandhv/kavrakilab-robots-tests.git
+      sub-dir: tests_fetch/test_fetch_hardware_bringup

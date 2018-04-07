@@ -8,15 +8,8 @@ if [ ! -d /opt/ros/$KAVRAKILAB_ROS_DISTRO ]
 then
 
     sudo apt-get install lsb wget -y
-    
     sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
-
     wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
-
-    sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-
-    wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
-
     sudo apt-get update
 
     # Install basic ROS packages. All other packages will be installed using kavrakilab-rosdep
@@ -25,6 +18,14 @@ then
     sudo rosdep init || true # make sure it always succeeds, even if rosdep init was already called
 
     rosdep update
+    
+    if [ $KAVRAKILAB_ROS_DISTRO = "kinetic" ]; then
+    	sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+    	wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+    	sudo apt-get update
+    	sudo apt-get install  --assume-yes gazebo9
+    fi
+    
 fi
 
 source /opt/ros/$KAVRAKILAB_ROS_DISTRO/setup.bash
@@ -36,9 +37,13 @@ then
     mkdir -p $KAVRAKILAB_SYSTEM_DIR/src
     hash g++ 2> /dev/null || sudo apt-get install --assume-yes g++
     cd $KAVRAKILAB_SYSTEM_DIR
-    catkin init
-    catkin config -a --cmake-args -DCMAKE_BUILD_TYPE=Release
-    catkin build
+    if [ $KAVRAKILAB_ROS_DISTRO = "kinetic" ]; then
+    	catkin init
+    	catkin config -a --cmake-args -DCMAKE_BUILD_TYPE=Release
+    	catkin build
+    elif [ $KAVRAKILAB_ROS_DISTRO = "indigo" ]; then
+    	catkin_make
+    fi
     touch $KAVRAKILAB_SYSTEM_DIR/devel/.catkin
     source $KAVRAKILAB_SYSTEM_DIR/devel/setup.bash
 fi
@@ -51,9 +56,13 @@ then
     catkin init
     echo "catkin init"
     echo "$KAVRAKILAB_SYSTEM_DIR/devel"
-    catkin config --extend $KAVRAKILAB_SYSTEM_DIR/devel
-    catkin config -a --cmake-args -DCMAKE_BUILD_TYPE=Release
-    catkin build
+    if [ $KAVRAKILAB_ROS_DISTRO = "kinetic" ]; then
+    	catkin init
+    	catkin config -a --cmake-args -DCMAKE_BUILD_TYPE=Release
+    	catkin build
+    elif [ $KAVRAKILAB_ROS_DISTRO = "indigo" ]; then
+    	catkin_make
+    fi
     touch $KAVRAKILAB_SYSTEM_DIR/devel/.catkin
     source $KAVRAKILAB_DEV_DIR/devel/setup.bash
 fi
