@@ -1,0 +1,5 @@
+- type: ros
+  source:
+      type: git
+      url: git@github.com:KavrakiLab/universal_robot.git
+      sub-dir: ur5_robotiq85_moveit_config
