@@ -1,0 +1,5 @@
+- type: ros
+  source:
+      type: git
+      url: git@github.com:KavrakiLab/vicon_object_server.git
+      sub-dir: vicon_object_server_library
