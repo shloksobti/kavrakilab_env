@@ -1,5 +1,8 @@
-- type: ros
-  source:
-      type: git
-      url: https://github.com/jsk-ros-pkg/jsk_3rdparty.git
-      sub-dir: 3rdparty/nlopt
+- type: system
+  name: nlopt
+  
+#- type: ros
+#  source:
+#      type: git
+#      url: https://github.com/jsk-ros-pkg/jsk_3rdparty.git
+#      sub-dir: 3rdparty/nlopt
