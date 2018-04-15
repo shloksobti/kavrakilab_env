@@ -3,5 +3,6 @@ then
     kavrakilab-install-target ros-moveit
     kavrakilab-install-target ros-moveit_msgs
     kavrakilab-install-target ros-moveit_resources
+    kavrakilab-install-target ros-ompl
 fi
 
