@@ -3,4 +3,4 @@
       type: git
       url: git@github.com:KavrakiLab/moveit.git
       version: kinetic-devel
-      sub-dir: moveit
+      sub-dir: moveit_planners
