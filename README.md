@@ -24,13 +24,6 @@ source ~/.kavrakilab/install
 If you like to learn about ROS, now is the time to do some [ROS tutorials](http://wiki.ros.org/ROS/Tutorials). 
 You can safely skip the first tutorial, since you have ROS installed and configured already.
 
-
-Install and compile MoveIt! from sources using kravrakilab env:
-```bash
-kavrakilab-get install ros-moveit
-kavrakilab-make
-```
-
 ## Usage
 
 ### Installation
