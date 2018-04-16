@@ -1,5 +1,7 @@
-- type: system
-  name: nlopt
+- type: ros
+  source:
+      type: system
+      name: nlopt
   
 #- type: ros
 #  source:
