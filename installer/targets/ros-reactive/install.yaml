@@ -1,0 +1,6 @@
+- type: ros
+  source:
+      type: git
+      url: git@bitbucket.org:Keliang_He/reactivemanipulation.git
+      version: abstraction
+      sub-dir: reactive
