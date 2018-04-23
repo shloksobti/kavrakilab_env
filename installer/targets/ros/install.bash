@@ -13,7 +13,7 @@ then
     sudo apt-get update
 
     # Install basic ROS packages. All other packages will be installed using kavrakilab-rosdep
-    sudo apt-get install  --assume-yes ros-$KAVRAKILAB_ROS_DISTRO-desktop python-rosinstall python-wstool python-catkin-tools terminator gazebo9
+    sudo apt-get install  --assume-yes ros-$KAVRAKILAB_ROS_DISTRO-desktop python-rosinstall python-wstool python-catkin-tools terminator
 
     sudo rosdep init || true # make sure it always succeeds, even if rosdep init was already called
 
