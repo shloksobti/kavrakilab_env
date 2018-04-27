@@ -1,0 +1,4 @@
+- type: ros
+  source:
+    type: git  
+    url: git@github.com:ChamzasKonstantinos/augmented_robot_controllers.git 
