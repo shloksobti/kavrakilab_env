@@ -2,5 +2,5 @@
   source:
       type: git
       url: git@github.com:KavrakiLab/fetch_ros.git
-      version: indigo-devel 
+      version: indigo-devel
       sub-dir: fetch_teleop
