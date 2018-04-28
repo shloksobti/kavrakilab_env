@@ -1,5 +1,4 @@
 - type: ros
   source:
-      type: git
-      url: git@github.com:KavrakiLab/moveit_ompl_planning_interface.git
-      version: kinetic-devel
+    type: system
+    name: moveit-ompl-planning-interface

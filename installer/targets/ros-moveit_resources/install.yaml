@@ -1,5 +1,4 @@
 - type: ros
   source:
-      type: git
-      url: https://github.com/ros-planning/moveit_resources.git
-      version: master
+    type: system
+    name: moveit-resources
