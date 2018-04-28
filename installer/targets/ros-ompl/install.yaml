@@ -2,3 +2,4 @@
   source:
       type: git
       url: git@github.com:KavrakiLab/catkin_ompl.git
+      version: melodic-devel
