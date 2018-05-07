@@ -50,16 +50,12 @@ then
     # Activate the default environment
     source ~/.kavrakilab/setup.bash
 
+	# Install ros
+    kavrakilab-get install ros
+    
     # Install git
     kavrakilab-get install git
-
-    # Install ros
-    kavrakilab-get install ros
-
-    # Install moveit
-    #kavrakilab-get install ros-moveit
-    #kavrakilab-make
-
+    
     echo "[kavrakilab_env install] Now restart your shell and see your new git ps1."
 
 else

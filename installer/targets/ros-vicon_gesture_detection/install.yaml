@@ -1,0 +1,5 @@
+- type: ros
+  source:
+    type: git
+    url: https://github.com/kavrakilab/vicon_gesture_detection.git
+    version: master
