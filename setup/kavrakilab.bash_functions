@@ -109,6 +109,19 @@ function kavrakilab-make-system
 	esac
 }
 
+function kavrakilab-make-isolated
+{
+case $(cat $_KAVRAKILAB_CATKIN_SYSTEM_DIR/devel/.built_by) in
+	'catkin_make')
+		catkin_make_isolated --directory $_KAVRAKILAB_CATKIN_SYSTEM_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@
+		;;
+	'catkin build')
+		catkin build --workspace $_KAVRAKILAB_CATKIN_SYSTEM_DIR $@
+		;;
+	esac
+	source ~/.bashrc
+}
+
 function kavrakilab-make-dev
 {
 	case $(cat $_KAVRAKILAB_CATKIN_DEV_DIR/devel/.built_by) in
@@ -145,8 +158,34 @@ function kavrakilab-make-dev
 
 function kavrakilab-make-dev-isolated
 {
-    catkin_make_isolated --directory $_KAVRAKILAB_CATKIN_DEV_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@
+case $(cat $_KAVRAKILAB_CATKIN_DEV_DIR/devel/.built_by) in
+	'catkin_make')
+		catkin_make_isolated --directory $_KAVRAKILAB_CATKIN_DEV_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@
+		;;
+	'catkin build')
+		catkin build --workspace $_KAVRAKILAB_CATKIN_DEV_DIR $@
+		;;
+	esac
+	source ~/.bashrc
 }
+
+function _kavrakilab-make-isolated
+{
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    local prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    COMPREPLY=( $(compgen -W "`_list_subdirs $_KAVRAKILAB_CATKIN_SYSTEM_DIR/src`" -- $cur) )
+}
+complete -F _kavrakilab-make-isolated kavrakilab-make-isolated
+
+function _kavrakilab-make-dev-isolated
+{
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    local prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    COMPREPLY=( $(compgen -W "`_list_subdirs $_KAVRAKILAB_CATKIN_DEV_DIR/src`" -- $cur) )
+}
+complete -F _kavrakilab-make-dev-isolated kavrakilab-make-dev-isolated
 
 # ----------------------------------------------------------------------------------------------------
 #                                              KAVRAKILAB-DEV
