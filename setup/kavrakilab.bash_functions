@@ -126,6 +126,23 @@ function kavrakilab-make-dev
 	source ~/.bashrc
 }
 
+function kavrakilab-make-dev
+{
+	case $(cat $_KAVRAKILAB_CATKIN_DEV_DIR/devel/.built_by) in
+	'catkin_make')
+		catkin_make --directory $_KAVRAKILAB_CATKIN_DEV_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@
+		;;
+	'catkin build')
+		catkin build --workspace $_KAVRAKILAB_CATKIN_DEV_DIR $@
+		;;
+	'')
+		catkin init --workspace $_KAVRAKILAB_CATKIN_DEV_DIR $@
+		catkin build --workspace $_KAVRAKILAB_CATKIN_DEV_DIR $@
+		;;
+	esac
+	source ~/.bashrc
+}
+
 function kavrakilab-make-dev-isolated
 {
     catkin_make_isolated --directory $_KAVRAKILAB_CATKIN_DEV_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@
@@ -179,6 +196,32 @@ function kavrakilab-dev-clean
     rm -rf $_KAVRAKILAB_CATKIN_DEV_DIR/build
 }
 
+function kavrakilab-dev-clean-pkg
+{
+	if [ -z "$1" ]
+    then
+        _list_subdirs $_KAVRAKILAB_CATKIN_DEV_DIR/src
+        return 0
+    fi
+    
+    for pkg in $@
+    do     
+        if [ ! -d $_KAVRAKILAB_CATKIN_DEV_DIR/src/$pkg ]
+        then
+            echo "[kavrakilab-dev-clean-pkg] '$pkg' does not exist in the dev workspace."
+        else
+            echo "Cleaned '$pkg'"
+			rm $_KAVRAKILAB_CATKIN_DEV_DIR/src/$pkg
+        fi
+    done
+
+    rm -rf $_KAVRAKILAB_CATKIN_DEV_DIR/devel/share
+    rm -rf $_KAVRAKILAB_CATKIN_DEV_DIR/devel/etc
+    rm -rf $_KAVRAKILAB_CATKIN_DEV_DIR/devel/include
+    rm -rf $_KAVRAKILAB_CATKIN_DEV_DIR/devel/lib
+    rm -rf $_KAVRAKILAB_CATKIN_DEV_DIR/build
+}
+
 function _kavrakilab-dev
 {
     local cur=${COMP_WORDS[COMP_CWORD]}
@@ -187,6 +230,16 @@ function _kavrakilab-dev
     COMPREPLY=( $(compgen -W "`_list_subdirs $_KAVRAKILAB_CATKIN_SYSTEM_DIR/src`" -- $cur) )
 }
 complete -F _kavrakilab-dev kavrakilab-dev
+
+
+function _kavrakilab-dev-clean-pkg
+{
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    local prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    COMPREPLY=( $(compgen -W "`_list_subdirs $_KAVRAKILAB_CATKIN_DEV_DIR/src`" -- $cur) )
+}
+complete -F _kavrakilab-dev-clean-pkg kavrakilab-dev-clean-pkg
 
 # ----------------------------------------------------------------------------------------------------
 #                                             KAVRAKILAB-STATUS
