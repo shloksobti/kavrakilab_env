@@ -139,23 +139,6 @@ function kavrakilab-make-dev
 	source ~/.bashrc
 }
 
-function kavrakilab-make-dev
-{
-	case $(cat $_KAVRAKILAB_CATKIN_DEV_DIR/devel/.built_by) in
-	'catkin_make')
-		catkin_make --directory $_KAVRAKILAB_CATKIN_DEV_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@
-		;;
-	'catkin build')
-		catkin build --workspace $_KAVRAKILAB_CATKIN_DEV_DIR $@
-		;;
-	'')
-		catkin init --workspace $_KAVRAKILAB_CATKIN_DEV_DIR $@
-		catkin build --workspace $_KAVRAKILAB_CATKIN_DEV_DIR $@
-		;;
-	esac
-	source ~/.bashrc
-}
-
 function kavrakilab-make-dev-isolated
 {
 case $(cat $_KAVRAKILAB_CATKIN_DEV_DIR/devel/.built_by) in
