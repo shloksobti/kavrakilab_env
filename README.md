@@ -22,6 +22,11 @@ In case you are using a custom version of kavrakilab_env, do not forget to check
 cd ~/.kavrakilab
 git checkout indigo-devel
 ```
+Or you can use melodic-devel for ROS Melodic:
+```bash
+cd ~/.kavrakilab
+git checkout melodic-devel
+```
 Once you have the package manager you can install ROS and setup the ROS environment by typing the following:
 ```bash
 source ~/.kavrakilab/install
