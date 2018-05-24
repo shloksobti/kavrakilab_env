@@ -1,4 +1,5 @@
 - type: ros
   source:
-    type: system
-    name: robot-localization
+      type: git
+      url: https://github.com/cra-ros-pkg/robot_localization.git
+      version: melodic-devel

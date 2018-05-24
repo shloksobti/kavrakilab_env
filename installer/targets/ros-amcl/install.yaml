@@ -1,4 +1,6 @@
 - type: ros
   source:
-    type: system
-    name: amcl
+      type: git
+      url: https://github.com/ros-planning/navigation.git
+      version: melodic-devel
+      sub-dir: amcl

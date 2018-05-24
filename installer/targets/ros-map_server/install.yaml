@@ -1,4 +1,6 @@
 - type: ros
   source:
-    type: system
-    name: map-server
+      type: git
+      url: https://github.com/ros-planning/navigation.git
+      version: melodic-devel
+      sub-dir: map_server

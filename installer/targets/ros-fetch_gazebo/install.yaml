@@ -2,5 +2,5 @@
   source:
       type: git
       url: git@github.com:KavrakiLab/fetch_gazebo.git
-      version: gazebo9
+      version: melodic-devel
       sub-dir: fetch_gazebo
