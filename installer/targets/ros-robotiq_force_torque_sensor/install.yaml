@@ -3,3 +3,4 @@
       type: git
       url: git@github.com:KavrakiLab/universal_robot.git
       sub-dir: robotiq_force_torque_sensor
+      version: tests/dylan-kinetic-devel
