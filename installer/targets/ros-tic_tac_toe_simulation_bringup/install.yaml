@@ -1,4 +1,4 @@
- type: ros
+- type: ros
   source:
       type: git
       url: git@github.com:KavrakiLab/tic_tac_toe_demo.git
