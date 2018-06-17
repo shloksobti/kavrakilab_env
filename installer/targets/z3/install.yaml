@@ -1,0 +1,5 @@
+- type: target
+  name: z3
+  source:
+    type: git
+    url: https://github.com/Z3Prover/z3.git
