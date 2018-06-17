@@ -3,4 +3,4 @@
       type: git
       url: git@github.com:KavrakiLab/kavrakilab_robots_tests.git
       sub-dir: tests_fetch/test_fetch_hardware_bringup
-      version: indigo-devel
+      version: move-base-test-indigo-devel
