@@ -1,0 +1,5 @@
+- type: ros
+  source:
+      type: git
+      url: https://github.com/JenniferBuehler/gazebo-pkgs.git
+      sub-dir: gazebo_grasp_plugin
