@@ -40,13 +40,9 @@ then
     mkdir -p $KAVRAKILAB_SYSTEM_DIR/src
     hash g++ 2> /dev/null || sudo apt-get install --assume-yes g++
     cd $KAVRAKILAB_SYSTEM_DIR
-    if [ $KAVRAKILAB_ROS_DISTRO = "kinetic" ]; then
-    	catkin init
-    	catkin config -a --cmake-args -DCMAKE_BUILD_TYPE=Release
-    	catkin build
-    elif [ $KAVRAKILAB_ROS_DISTRO = "indigo" ]; then
-    	catkin_make
-    fi
+    catkin init
+    catkin config -a --cmake-args -DCMAKE_BUILD_TYPE=Release
+    catkin build
     touch $KAVRAKILAB_SYSTEM_DIR/devel/.catkin
     source $KAVRAKILAB_SYSTEM_DIR/devel/setup.bash
 fi
@@ -59,13 +55,9 @@ then
     catkin init
     echo "catkin init"
     echo "$KAVRAKILAB_SYSTEM_DIR/devel"
-    if [ $KAVRAKILAB_ROS_DISTRO = "kinetic" ]; then
-    	catkin init
-    	catkin config -a --cmake-args -DCMAKE_BUILD_TYPE=Release
-    	catkin build
-    elif [ $KAVRAKILAB_ROS_DISTRO = "indigo" ]; then
-    	catkin_make
-    fi
+    catkin init
+    catkin config -a --cmake-args -DCMAKE_BUILD_TYPE=Release
+    catkin build
     touch $KAVRAKILAB_SYSTEM_DIR/devel/.catkin
     source $KAVRAKILAB_DEV_DIR/devel/setup.bash
 fi
