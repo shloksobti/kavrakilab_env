@@ -13,7 +13,7 @@ then
     sudo apt-get update
 
     # Install basic ROS packages. All other packages will be installed using kavrakilab-rosdep
-    sudo apt-get install  --assume-yes ros-$KAVRAKILAB_ROS_DISTRO-desktop python-rosinstall python-wstool python-catkin-tools terminator
+    sudo apt-get install  --assume-yes ros-$KAVRAKILAB_ROS_DISTRO-desktop python-rosinstall python-wstool python-catkin-tools terminator python-pip
 
     sudo rosdep init || true # make sure it always succeeds, even if rosdep init was already called
 
@@ -22,7 +22,7 @@ then
     sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
     wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
     sudo apt-get update
-    		
+
     if [ $KAVRAKILAB_ROS_DISTRO = "indigo" ]; then
     	sudo apt-get install  --assume-yes gazebo7
     else

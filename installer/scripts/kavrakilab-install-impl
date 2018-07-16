@@ -322,6 +322,18 @@ function kavrakilab-install-system
     KAVRAKILAB_INSTALL_SYSTEMS="$1 $KAVRAKILAB_INSTALL_SYSTEMS"
 }
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+function kavrakilab-install-pip
+{
+    if [ -z "$1" ]
+    then
+        kavrakilab-install-error "Invalid kavrakilab-install-pip call: needs package as argument."
+    fi
+    #kavrakilab-install-debug "Adding $1 to pip list"
+    KAVRAKILAB_INSTALL_PIPS="$1 $KAVRAKILAB_INSTALL_PIPS"
+}
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 function kavrakilab-install-pkg
@@ -582,6 +594,7 @@ KAVRAKILAB_INSTALL_TEMP_DIR=/tmp/kavrakilab-installer/`randid`
 mkdir -p $KAVRAKILAB_INSTALL_TEMP_DIR
 
 KAVRAKILAB_INSTALL_SYSTEMS=
+KAVRAKILAB_INSTALL_PIPS=
 
 KAVRAKILAB_INSTALL_WARNINGS=
 KAVRAKILAB_INSTALL_INFOS=
@@ -630,6 +643,7 @@ fi
 # Remove temp directories
 rm /tmp/kavrakilab-installer -rf
 
+# Installing all system (apt-get) targets, which are collected during the install
 if [ -n "$KAVRAKILAB_INSTALL_SYSTEMS" ]; then
 
     echo -e "\nsudo apt-get install $KAVRAKILAB_INSTALL_SYSTEMS" >> $INSTALL_DETAILS_FILE
@@ -648,6 +662,22 @@ if [ -n "$KAVRAKILAB_INSTALL_SYSTEMS" ]; then
 		echo -e "Going to run the following command:\n"
 		echo "sudo apt-get install -y$pkgs_to_install"
         sudo apt-get install -y $pkgs_to_install
+    fi
+fi
+
+# Installing all python (pip) targets, which are collected during the install
+if [ -n "$KAVRAKILAB_INSTALL_PIPS" ]; then
+
+    #TUE_INSTALL_CURRENT_TARGET="PIP"
+
+    echo -e "\nyes | pip install $KAVRAKILAB_INSTALL_PIPS" >> $INSTALL_DETAILS_FILE
+
+    # Just install the packages because checking for installation is not faster
+    if [ -n "$KAVRAKILAB_INSTALL_PIPS" ]
+    then
+        echo -e "Going to run the following command:\n"
+        echo -e "yes | sudo pip install $KAVRAKILAB_INSTALL_PIPS\n"
+        yes | sudo pip install $KAVRAKILAB_INSTALL_PIPS
     fi
 fi
 
