@@ -668,16 +668,14 @@ fi
 # Installing all python (pip) targets, which are collected during the install
 if [ -n "$KAVRAKILAB_INSTALL_PIPS" ]; then
 
-    #TUE_INSTALL_CURRENT_TARGET="PIP"
-
     echo -e "\nyes | pip install $KAVRAKILAB_INSTALL_PIPS" >> $INSTALL_DETAILS_FILE
 
     # Just install the packages because checking for installation is not faster
     if [ -n "$KAVRAKILAB_INSTALL_PIPS" ]
     then
         echo -e "Going to run the following command:\n"
-        echo -e "yes | sudo pip install $KAVRAKILAB_INSTALL_PIPS\n"
-        yes | sudo pip install $KAVRAKILAB_INSTALL_PIPS
+        echo -e "yes | pip install --user $KAVRAKILAB_INSTALL_PIPS\n"
+        yes | pip install --user $KAVRAKILAB_INSTALL_PIPS
     fi
 fi
 
