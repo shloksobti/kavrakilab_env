@@ -1,0 +1,6 @@
+- type: ros
+  source:
+      type: git
+      url: git@github.com:KavrakiLab/robowflex.git
+      sub-dir: robowflex_tesseract
+      version: tesseract
