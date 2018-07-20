@@ -1,4 +1,4 @@
 - type: ros
   source:
     type: system
-    name: gazebo9-msgs
+    name: gazebo7-msgs

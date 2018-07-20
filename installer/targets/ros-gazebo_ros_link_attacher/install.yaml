@@ -2,4 +2,4 @@
   source:
       type: git
       url: https://github.com/KavrakiLab/gazebo_ros_link_attacher.git 
-      version: gazebo9
+      version: gazebo7
