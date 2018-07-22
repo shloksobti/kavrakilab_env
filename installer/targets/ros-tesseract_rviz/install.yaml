@@ -1,5 +1,5 @@
 - type: ros
   source:
       type: git
-      url: git@github.com:ros-industrial-consortium/tesseract.git
+      url: git@github.com:KavrakiLab/tesseract.git
       sub-dir: tesseract_rviz
