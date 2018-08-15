@@ -1,4 +1,6 @@
 - type: ros
   source:
-      type: system
-      name: gmapping
+      type: git
+      url: https://github.com/ros-perception/slam_gmapping.git
+      version: hydro-devel
+      sub-dir: gmapping

@@ -1,5 +1,5 @@
 - type: ros
   source:
       type: git
-      url: git@github.com:KavrakiLab/moveit.git
+      url: git@github.com:ros-planning/moveit.git
       version: melodic-devel
