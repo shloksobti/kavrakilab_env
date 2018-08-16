@@ -3,4 +3,5 @@
       type: git
       url: git@bitbucket.org:Keliang_He/reactivemanipulation.git
       version: symbolic
-      sub-dir: abstraction_construction
+      sub-dir: symbolic
+      

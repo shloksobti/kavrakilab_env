@@ -2,5 +2,5 @@
   source:
       type: git
       url: git@bitbucket.org:Keliang_He/reactivemanipulation.git
-      version: abstraction
+      version: symbolic
       sub-dir: data_structures
