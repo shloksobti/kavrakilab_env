@@ -1,5 +1,5 @@
 - type: ros
   source:
       type: git
-      url: git@github.com:KeliangH/Syft.git
+      url: git@github.com:KavrakiLab/Syft.git
       version: catkin
