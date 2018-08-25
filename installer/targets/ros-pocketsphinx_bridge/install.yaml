@@ -2,4 +2,3 @@
   source:
       type: git
       url: git@github.com:KavrakiLab/pocketsphinx_bridge.git
-

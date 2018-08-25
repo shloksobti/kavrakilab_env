@@ -2,5 +2,5 @@
   source:
       type: git
       url: git@github.com:KavrakiLab/fetch_gazebo.git
-      version: gazebo9
+      version: gazebo7
       sub-dir: fetch_gazebo_demo

@@ -109,6 +109,19 @@ function kavrakilab-make-system
 	esac
 }
 
+function kavrakilab-make-isolated
+{
+case $(cat $_KAVRAKILAB_CATKIN_SYSTEM_DIR/devel/.built_by) in
+	'catkin_make')
+		catkin_make_isolated --directory $_KAVRAKILAB_CATKIN_SYSTEM_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@
+		;;
+	'catkin build')
+		catkin build --workspace $_KAVRAKILAB_CATKIN_SYSTEM_DIR $@
+		;;
+	esac
+	source ~/.bashrc
+}
+
 function kavrakilab-make-dev
 {
 	case $(cat $_KAVRAKILAB_CATKIN_DEV_DIR/devel/.built_by) in
@@ -128,8 +141,34 @@ function kavrakilab-make-dev
 
 function kavrakilab-make-dev-isolated
 {
-    catkin_make_isolated --directory $_KAVRAKILAB_CATKIN_DEV_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@
+case $(cat $_KAVRAKILAB_CATKIN_DEV_DIR/devel/.built_by) in
+	'catkin_make')
+		catkin_make_isolated --directory $_KAVRAKILAB_CATKIN_DEV_DIR -DCMAKE_BUILD_TYPE=RelWithDebInfo $@
+		;;
+	'catkin build')
+		catkin build --workspace $_KAVRAKILAB_CATKIN_DEV_DIR $@
+		;;
+	esac
+	source ~/.bashrc
 }
+
+function _kavrakilab-make-isolated
+{
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    local prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    COMPREPLY=( $(compgen -W "`_list_subdirs $_KAVRAKILAB_CATKIN_SYSTEM_DIR/src`" -- $cur) )
+}
+complete -F _kavrakilab-make-isolated kavrakilab-make-isolated
+
+function _kavrakilab-make-dev-isolated
+{
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    local prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    COMPREPLY=( $(compgen -W "`_list_subdirs $_KAVRAKILAB_CATKIN_DEV_DIR/src`" -- $cur) )
+}
+complete -F _kavrakilab-make-dev-isolated kavrakilab-make-dev-isolated
 
 # ----------------------------------------------------------------------------------------------------
 #                                              KAVRAKILAB-DEV
@@ -179,6 +218,32 @@ function kavrakilab-dev-clean
     rm -rf $_KAVRAKILAB_CATKIN_DEV_DIR/build
 }
 
+function kavrakilab-dev-clean-pkg
+{
+	if [ -z "$1" ]
+    then
+        _list_subdirs $_KAVRAKILAB_CATKIN_DEV_DIR/src
+        return 0
+    fi
+    
+    for pkg in $@
+    do     
+        if [ ! -d $_KAVRAKILAB_CATKIN_DEV_DIR/src/$pkg ]
+        then
+            echo "[kavrakilab-dev-clean-pkg] '$pkg' does not exist in the dev workspace."
+        else
+            echo "Cleaned '$pkg'"
+			rm $_KAVRAKILAB_CATKIN_DEV_DIR/src/$pkg
+        fi
+    done
+
+    rm -rf $_KAVRAKILAB_CATKIN_DEV_DIR/devel/share
+    rm -rf $_KAVRAKILAB_CATKIN_DEV_DIR/devel/etc
+    rm -rf $_KAVRAKILAB_CATKIN_DEV_DIR/devel/include
+    rm -rf $_KAVRAKILAB_CATKIN_DEV_DIR/devel/lib
+    rm -rf $_KAVRAKILAB_CATKIN_DEV_DIR/build
+}
+
 function _kavrakilab-dev
 {
     local cur=${COMP_WORDS[COMP_CWORD]}
@@ -187,6 +252,16 @@ function _kavrakilab-dev
     COMPREPLY=( $(compgen -W "`_list_subdirs $_KAVRAKILAB_CATKIN_SYSTEM_DIR/src`" -- $cur) )
 }
 complete -F _kavrakilab-dev kavrakilab-dev
+
+
+function _kavrakilab-dev-clean-pkg
+{
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    local prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    COMPREPLY=( $(compgen -W "`_list_subdirs $_KAVRAKILAB_CATKIN_DEV_DIR/src`" -- $cur) )
+}
+complete -F _kavrakilab-dev-clean-pkg kavrakilab-dev-clean-pkg
 
 # ----------------------------------------------------------------------------------------------------
 #                                             KAVRAKILAB-STATUS
@@ -255,7 +330,7 @@ function _kavrakilab-repo-status
             fi
 
             local current_branch=`git rev-parse --abbrev-ref HEAD`
-            if [ $current_branch != "master" ] && [ $current_branch != "hydro-devel" ] && [ $current_branch != "develop" ] && [ $current_branch != "indigo-devel" ] && [ $current_branch != "jade-devel" ]
+            if [ $current_branch != "master" ] && [ $current_branch != "hydro-devel" ] && [ $current_branch != "develop" ] && [ $current_branch != "indigo-devel" ] && [ $current_branch != "jade-devel" ] && [ $current_branch != "kinetic-devel" ]
             then
                 echo -e "\033[1m$name\033[0m is on branch '$current_branch'"
             fi
@@ -712,78 +787,3 @@ For example:
 
     cd $mem_pwd
 }
-
-# Temporarily for RoboCup
-
-function kavrakilab-robocup-set-github-origin
-{
-    kavrakilab-set-git-remote origin amigo@192.168.2.10:
-}
-
-function kavrakilab-robocup-reset-github-origin
-{
-    kavrakilab-set-git-remote origin https://github.com/
-}
-
-function kavrakilab-robocup-install-package
-{
-    local pkg_dir=$KAVRAKILAB_ENV_DIR/repos/https:/github.com/kavrakilab-robotics/${1}.git
-   
-    # If directory already exists, return
-    [ -d $pkg_dir ] && return
-
-    git clone amigo@192.168.2.10:kavrakilab-robotics/${1}.git $pkg_dir
-
-    ln -s $pkg_dir $KAVRAKILAB_ENV_DIR/system/src/$1
-}
-
-function kavrakilab-robocup-update
-{
-    local mem_pwd=$PWD
-
-    cd ~/.kavrakilab
-    git pull
-
-    kavrakilab-robocup-install-package picaso_4d_systems
-
-    # Copy rsettings file
-    if [ "$ROBOT_REAL" != "true" ]
-    then
-        cp ~/.kavrakilab/installer/targets/kavrakilab-common/rsettings_file ~/.kavrakilab/.rsettings
-    fi
-
-    local fs=`ls $_KAVRAKILAB_CATKIN_SYSTEM_DIR/src`
-    for pkg in $fs
-    do
-        local pkg_dir=$_KAVRAKILAB_CATKIN_SYSTEM_DIR/src/$pkg
-
-        if [ -d $pkg_dir ]
-        then
-            cd $pkg_dir
-            local current_url=`git config --get remote.origin.url`
-
-            if echo "$current_url" | grep -q "192.168.2.10"
-            then
-                echo -n "$pkg: "
-                git pull
-            fi
-        fi
-    done
-
-	if [ ! -d $KAVRAKILAB_ENV_DIR/system/src/robocup_knowledge ]; then
-		ln -s $KAVRAKILAB_ENV_DIR/repos/https:/github.com/kavrakilab-robotics/kavrakilab_robocup.git/robocup_knowledge $KAVRAKILAB_ENV_DIR/system/src/robocup_knowledge 
-	fi
-
-    cd $mem_pwd
-}
-
-function kavrakilab-robocup-set-apt-get-proxy
-{
-    sudo bash -c "echo 'Acquire::http::Proxy \"http://roboticssrv.wtb.kavrakilab.nl:3142\";' > /etc/apt/apt.conf.d/01proxy"
-}
-
-function kavrakilab-robocup-unset-apt-get-proxy
-{
-    sudo rm /etc/apt/apt.conf.d/01proxy
-}
-

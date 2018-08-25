@@ -2,3 +2,4 @@
   source:
       type: git
       url: git@github.com:KavrakiLab/tic_tac_toe_demo.git
+      sub-dir: tic_tac_toe_desktop_bringup 

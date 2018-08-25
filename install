@@ -20,7 +20,9 @@ then
     . /etc/lsb-release
 
     # Set ROS version
-    if [ $DISTRIB_CODENAME = "xenial" ]; then
+    if [ $DISTRIB_CODENAME = "bionic" ]; then
+        KAVRAKILAB_ROS_DISTRO="melodic"
+    elif [ $DISTRIB_CODENAME = "xenial" ]; then
         KAVRAKILAB_ROS_DISTRO="kinetic"
     elif [ $DISTRIB_CODENAME = "trusty" ]; then
         KAVRAKILAB_ROS_DISTRO="indigo"

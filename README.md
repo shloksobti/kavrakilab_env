@@ -17,10 +17,15 @@ Now you can make sure you clone the kavrakilab_env package manager on to you com
 ```bash
 git clone git@github.com:KavrakiLab/kavrakilab_env.git ~/.kavrakilab
 ```
-In case you are using a custom version of kavrakilab_env, do not forget to checkout the corresponding branch (if you don't have a custom branch, skip this step). For instance, the real Fetch uses indigo-devel:
+In case you are using a custom version of kavrakilab_env, do not forget to checkout the corresponding branch (if you don't have a custom branch, skip this step). For instance, the real Fetch uses indigo-devel-moveit-kinetic:
 ```bash
 cd ~/.kavrakilab
 git checkout indigo-devel
+```
+Or you can use melodic-devel for ROS Melodic:
+```bash
+cd ~/.kavrakilab
+git checkout melodic-devel
 ```
 Once you have the package manager you can install ROS and setup the ROS environment by typing the following:
 ```bash
@@ -79,10 +84,15 @@ Now that we have packages installed (or developed), we can compile the packages.
 kavrakilab-make
 ```
 
+In case you would like to compile one target and its dependencies:
+```bash
+kavrakilab-make-isolated package_name
+```
+
 #### How does it work
 The kavrakilab-make command first enters the ROS system workspace that contains all the packages that you have installed. It then
-triggers the `catkin_make` command that compiles your ROS environment (as explained [here](http://wiki.ros.org/ROS/Tutorials/BuildingPackages#ROS.2BAC8-Tutorials.2BAC8-catkin.2BAC8-BuildingPackages.Using_catkin_make).
-Notive that the system workspace does not contain the actual files. It instead contains symbolic links to the folder at your hard disk that was used to
+triggers the `catkin build` command that compiles your ROS environment (as explained [here](http://catkin-tools.readthedocs.io/en/latest/verbs/catkin_build.html).
+Notice that the system workspace does not contain the actual files. It instead contains symbolic links to the folder at your hard disk that was used to
 check out the code. One reason is that this simplifies working with packages from different repositories.
 
 ### Developing packages
@@ -101,7 +111,18 @@ You will now find the package in your dev workspace. If you would like to compil
 kavrakilab-make-dev
 ```
 
-If you want to clear you development workspace you type:
+In case you would like to compile one target of your development workspace (and its dependencies, only if they are also in
+the development repository):
+```bash
+kavrakilab-make-dev-isolated package_name
+```
+
+If you want to clean (remove) one package from your development workspace you type:
+```bash
+kavrakilab-dev-clean-pkg package_name
+```
+
+If you want to clean all your development workspace you type:
 ```bash
 kavrakilab-dev-clean
 ```

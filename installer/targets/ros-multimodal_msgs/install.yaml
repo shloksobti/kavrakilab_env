@@ -2,4 +2,4 @@
   source:
       type: git
       url: git@github.com:KavrakiLab/multimodal-task-specification.git
-      sub-dir: multimodal_desktop_bringup
+      sub-dir: multimodal_msgs
