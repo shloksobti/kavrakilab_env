@@ -1,0 +1,5 @@
+- type: ros
+  source:
+      type: git
+      url: git@github.com:KavrakiLab/pick_place_server.git
+      sub-dir: pick_place_server_client/
