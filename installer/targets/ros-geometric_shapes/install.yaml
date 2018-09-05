@@ -2,4 +2,4 @@
   source:
       type: git
       url: https://github.com/ros-planning/geometric_shapes.git
-      version: kinetic-devel
+      version: melodic-devel
