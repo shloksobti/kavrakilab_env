@@ -2,4 +2,4 @@
   source:
       type: git
       url: git@github.com:KavrakiLab/moveit_msgs.git
-      version: melodic-devel
+      version: test/goal_regions

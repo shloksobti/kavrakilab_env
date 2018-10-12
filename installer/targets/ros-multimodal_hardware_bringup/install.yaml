@@ -3,3 +3,4 @@
       type: git
       url: git@github.com:KavrakiLab/multimodal-task-specification.git
       sub-dir: multimodal_hardware_bringup
+      version: test/goal_regions

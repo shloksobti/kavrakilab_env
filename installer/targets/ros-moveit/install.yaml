@@ -2,4 +2,4 @@
   source:
       type: git
       url: git@github.com:KavrakiLab/moveit.git
-      version: melodic-devel-ompl-source
+      version: melodic-devel-ompl-source-test-goal_regions
