@@ -1,0 +1,4 @@
+- type: ros
+  source:
+      type: git
+      url: git@github.com:a-price/robotiq_arg85_description.git
