@@ -6,7 +6,3 @@
   source:
     type: system
     name: rqt-topic
-- type: ros
-  source:
-    type: system
-    name: rqt-multiplot
