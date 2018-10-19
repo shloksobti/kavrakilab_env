@@ -2,3 +2,7 @@
   source:
     type: system
     name: joystick-drivers
+- type: ros
+  source:
+    type: system
+    name: joy
