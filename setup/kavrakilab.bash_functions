@@ -330,7 +330,7 @@ function _kavrakilab-repo-status
             fi
 
             local current_branch=`git rev-parse --abbrev-ref HEAD`
-            if [ $current_branch != "master" ] && [ $current_branch != "hydro-devel" ] && [ $current_branch != "develop" ] && [ $current_branch != "indigo-devel" ] && [ $current_branch != "jade-devel" ]
+            if [ $current_branch != "master" ] && [ $current_branch != "hydro-devel" ] && [ $current_branch != "develop" ] && [ $current_branch != "indigo-devel" ] && [ $current_branch != "jade-devel" ] && [ $current_branch != "kinetic-devel" ] && [ $current_branch != "melodic-devel" ]
             then
                 echo -e "\033[1m$name\033[0m is on branch '$current_branch'"
             fi
