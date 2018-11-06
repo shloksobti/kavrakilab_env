@@ -1,0 +1,5 @@
+- type: ros
+  source:
+      type: git
+      url: git@github.com:KavrakiLab/fetch_move_base.git
+      sub-dir: fetch_move_base_mapping
