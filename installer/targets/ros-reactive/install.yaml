@@ -1,0 +1,7 @@
+- type: ros
+  source:
+      type: git
+      url: git@github.com:KavrakiLab/reactive.git
+      version: catkin
+      sub-dir: reactive
+
