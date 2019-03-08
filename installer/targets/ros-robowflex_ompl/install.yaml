@@ -3,4 +3,4 @@
       type: git
       url: git@github.com:KavrakiLab/robowflex.git
       sub-dir: robowflex_ompl
-      version: test/goal_regions
+      version: master
