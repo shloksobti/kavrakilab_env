@@ -20,7 +20,7 @@ git clone git@github.com:KavrakiLab/kavrakilab_env.git ~/.kavrakilab
 In case you are using a custom version of kavrakilab_env, do not forget to checkout the corresponding branch (if you don't have a custom branch, skip this step). For instance, the real Fetch uses indigo-devel-moveit-kinetic:
 ```bash
 cd ~/.kavrakilab
-git checkout indigo-devel
+git checkout indigo-devel-moveit-kinetic
 ```
 Or you can use melodic-devel for ROS Melodic:
 ```bash
