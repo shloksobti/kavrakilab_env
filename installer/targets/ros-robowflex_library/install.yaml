@@ -3,3 +3,4 @@
       type: git
       url: git@github.com:KavrakiLab/robowflex.git
       sub-dir: robowflex_library
+      version: fix_plugin_io_script
